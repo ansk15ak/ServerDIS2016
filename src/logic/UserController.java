@@ -160,6 +160,7 @@ public class UserController {
 
             if(userId != 0) {
                 whereParams.put("user_id", String.valueOf(userId));
+                whereParams.put("id",String.valueOf(reviewId));
             }
 
             whereParams.put("id", String.valueOf(reviewId));
