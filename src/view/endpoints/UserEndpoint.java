@@ -24,8 +24,11 @@ public class UserEndpoint {
     @Produces("application/json")
     @Path("/lecture/{code}")
     public Response getLectures(@PathParam("code") String code) {
+
+        String lecturesDecrypt = Digester.decrypt(code);
+
         UserController userCtrl = new UserController();
-        ArrayList<LectureDTO> lectures = userCtrl.getLectures(code);
+        ArrayList<LectureDTO> lectures = userCtrl.getLectures(lecturesDecrypt);
 
         if (!lectures.isEmpty()) {
             return successResponse(200, lectures);
@@ -56,11 +59,15 @@ public class UserEndpoint {
      */
     @GET
     @Path("/course/{userId}")
-    public Response getCourses(@PathParam("userId") int userId) {
+    public Response getCourses(@PathParam("userId") String userId) {
 
         Gson gson = new Gson();
+
+        String courseDecrypt = Digester.decrypt(userId);
+        int integerCourses = Integer.valueOf(courseDecrypt);
+
         UserController userCtrl = new UserController();
-        ArrayList<CourseDTO> courses = userCtrl.getCourses(userId);
+        ArrayList<CourseDTO> courses = userCtrl.getCourses(integerCourses);
 
         if (!courses.isEmpty()) {
             return successResponse(200, courses);
@@ -72,10 +79,14 @@ public class UserEndpoint {
     @GET
     @Consumes("applications/json")
     @Path("/review/{lectureId}")
-    public Response getReviews(@PathParam("lectureId") int lectureId) {
+    public Response getReviews(@PathParam("lectureId") String lectureId) {
         Gson gson = new Gson();
+
+        String reviewDecrypt = Digester.decrypt(lectureId);
+        int intergerReview = Integer.valueOf(reviewDecrypt);
+
         UserController userCtrl = new UserController();
-        ArrayList<ReviewDTO> reviews = userCtrl.getReviews(lectureId);
+        ArrayList<ReviewDTO> reviews = userCtrl.getReviews(intergerReview);
 
         if (!reviews.isEmpty()) {
             return successResponse(200, reviews);
@@ -86,10 +97,14 @@ public class UserEndpoint {
     @GET
     @Consumes("applications/json")
     @Path("/reviews/{userId}")
-    public Response getReviewsFromUserId(@PathParam("userId") int userId) {
+    public Response getReviewsFromUserId(@PathParam("userId") String userId) {
         Gson gson = new Gson();
+
+        String reviewFromUserIdDecrypt = Digester.decrypt(userId);
+        int intergerReviewFromUserId = Integer.valueOf(reviewFromUserIdDecrypt);
+
         UserController userCtrl = new UserController();
-        ArrayList<ReviewDTO> reviews = userCtrl.getReviewsFromUserId(userId);
+        ArrayList<ReviewDTO> reviews = userCtrl.getReviewsFromUserId(intergerReviewFromUserId);
 
         if (!reviews.isEmpty()) {
             return successResponse(200, reviews);
@@ -104,7 +119,7 @@ public class UserEndpoint {
     public Response login(String data) {
 
         Gson gson = new Gson();
-        UserDTO user = new Gson().fromJson(data, UserDTO.class);
+        UserDTO user = new Gson().fromJson(Digester.decrypt(data), UserDTO.class);
         UserController userCtrl = new UserController();
 
         if (user != null) {
@@ -117,14 +132,14 @@ public class UserEndpoint {
 
     protected Response errorResponse(int status, String message) {
 
-        //return Response.status(status).entity(new Gson().toJson(Digester.encrypt("{\"message\": \"" + message + "\"}"))).build();
-        return Response.status(status).entity(new Gson().toJson("{\"message\": \"" + message + "\"}")).build();
+        return Response.status(status).entity(new Gson().toJson(Digester.encrypt("{\"message\": \"" + message + "\"}"))).build();
+        //return Response.status(status).entity(new Gson().toJson("{\"message\": \"" + message + "\"}")).build();
     }
 
     protected Response successResponse(int status, Object data) {
         Gson gson = new Gson();
 
-        //return Response.status(status).entity(gson.toJson(Digester.encrypt(gson.toJson(data)))).build();
-        return Response.status(status).entity(gson.toJson(data)).build();
+        return Response.status(status).entity((Digester.encrypt(gson.toJson(data)))).build();
+        //return Response.status(status).entity(gson.toJson(data)).build();
     }
 }
