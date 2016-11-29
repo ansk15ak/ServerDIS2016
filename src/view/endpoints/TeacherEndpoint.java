@@ -43,17 +43,36 @@ public class TeacherEndpoint extends UserEndpoint {
     @GET
     @Consumes("applications/json")
     @Produces("application/json")
-    @Path("/course/{courseId}")
+    @Path("/course/participant/{courseId}")
     public Response getCourseParticipant(@PathParam("courseId") String courseId) {
 
         String courseParticipantDecrypt = Digester.decrypt(courseId);
         int integerCoursesParticipant = Integer.valueOf(courseParticipantDecrypt);
 
-        UserController userCtrl = new UserController();
-        ArrayList<CourseDTO> courses = userCtrl.getCourses(integerCoursesParticipant);
+        TeacherController teacherController = new TeacherController();
+        int participant = teacherController.getCourseParticipants(integerCoursesParticipant);
 
-        if (!courses.isEmpty()) {
-            return successResponse(200, courses);
+        if (participant !=0) {
+            String returnString = String.valueOf(participant);
+            return successResponse(200, returnString);
+        } else {
+            return errorResponse(404, "Failed. Couldn't get lectures.");
+        }
+    }
+    @GET
+    @Consumes("applications/json")
+    @Produces("application/json")
+    @Path("/course/average/{name}")
+    public Response getAverageForLecture(@PathParam("name") String name) {
+
+        String courseParticipantDecrypt = Digester.decrypt(name);
+        TeacherController teacherController = new TeacherController();
+        double averageCourses = 0;
+        averageCourses = teacherController.calculateAverageRatingOnCourse(courseParticipantDecrypt);
+
+        if (averageCourses !=0) {
+            String returnString = String.valueOf(averageCourses);
+            return successResponse(200, returnString);
         } else {
             return errorResponse(404, "Failed. Couldn't get lectures.");
         }

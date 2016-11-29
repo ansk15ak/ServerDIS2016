@@ -203,9 +203,9 @@ public class AdminController extends UserController {
             System.out.println("id: " + studyDTO.getId() + " - forkortelse: " + studyDTO.getShortname() + " - name: " + studyDTO.getName() );
         }
 
-        Scanner input1 = new Scanner(System.in);
+        Scanner inputStudy = new Scanner(System.in);
         System.out.println("Indtast id for det studie brugeren skal tilknyttet: ");
-        int idStudyChoice = input1.nextInt();
+        int idStudyChoice = inputStudy.nextInt();
 
         for (CourseDTO courseDTO : getCourseStudy(idStudyChoice)) {
             System.out.println("Id: " + courseDTO.getId() + " - Name: " + courseDTO.getCode() + " " + courseDTO.getDisplaytext());
@@ -239,7 +239,7 @@ public class AdminController extends UserController {
 
             while (rs.next()) {
                 CourseDTO courses1 = new CourseDTO();
-                //courses1.setId(rs.getInt("id"));
+                courses1.setId(rs.getString("id"));
                 courses1.setCode(rs.getString("code"));
                 courses1.setDisplaytext(rs.getString("name"));
 
