@@ -1,5 +1,8 @@
 package shared;
 
+/**
+ * Skabelon på et review
+ */
 public class ReviewDTO {
 
     private int id;
@@ -9,9 +12,11 @@ public class ReviewDTO {
     private String comment;
     private boolean isDeleted;
 
+    // Variabler skal defineres efterfølgende via public setters
     public ReviewDTO() {
     }
 
+    // Variabler defineres under initiering
     public ReviewDTO(int userId, int lectureId, int rating, String comment, boolean isDeleted) {
         this.userId = userId;
         this.lectureId = lectureId;
@@ -68,6 +73,10 @@ public class ReviewDTO {
         isDeleted = deleted;
     }
 
+    /**
+     * En tekstbeskrivelse af et review
+     * @return String repræsentationen på et review
+     */
     @Override
     public String toString() {
         return "ReviewDTO{" +

@@ -1,4 +1,4 @@
-//TODO: Mangler dokumentation.
+
 import com.google.gson.Gson;
 import com.sun.jersey.api.container.httpserver.HttpServerFactory;
 import com.sun.net.httpserver.HttpServer;
@@ -16,14 +16,25 @@ import view.TUIMainMenu;
 import javax.ws.rs.*;
 import java.io.PrintStream;
 
-//TODO: Missing documentation and use of config variables.
+/**
+ * Run klassen indeholder main metoden, som starter serveren op.
+ *
+ */
+
 public class Run {
+
+    /**
+     * Denne metode anvendes af JVM til at starte eksekveringen af programmet.
+     * Serveren startes op og en url til serveren tilbydes i TUI.
+     * @param args
+     * @throws IOException
+     */
 
     public static void main(String[] args) throws IOException {
 
         HttpServer server = null;
 
-        //Loader configfilen
+        // Configurationsfilen loades
         ConfigLoader.parseConfig();
 
         try {
@@ -31,36 +42,36 @@ public class Run {
             System.setOut(null);
             server = HttpServerFactory.create("http://" + ConfigLoader.SERVER_ADDRESS + ":" + ConfigLoader.SERVER_PORT + "/");
             System.setOut(stdout);
-        }catch(ArrayIndexOutOfBoundsException a){
-            Logging.log(a, 3, "Fejl. Sysem startede ikke!");
+
+            server.start();
+
+            // Log initieres og log level bestemmes
+            Logging.setLogLevel(ConfigLoader.DEBUG);
+
+            // Data indlæses i database
+            //CBSParser.parseCBSData();
+
+            // Vejledning med url printes til TUI
+            System.out.println("Server running");
+            System.out.println("Visit: http://" + ConfigLoader.SERVER_ADDRESS + ":" + ConfigLoader.SERVER_PORT + "/");
+
+            AdminDTO adminDTO = new AdminDTO();
+            TUIMainMenu tuiMainMenu = new TUIMainMenu();
+            tuiMainMenu.tUILogIn(adminDTO);
+
+            System.out.println("Hit return to stop...");
+            System.in.read();
+            System.out.println("Stopping server");
+            System.out.println("Server stopped");
+            System.out.println();
+
+        }
+        catch(Exception e){
+            Logging.log(e, 3, "Fejl. System startede ikke!");
+            System.out.println(e);
             System.exit(20);
         }
 
-        server.start();
-
-        //Setup logLevel and prepare to log
-        Logging.initiateLog(ConfigLoader.DEBUG);
-
-
-        try {
-            //CBSParser.parseCBSData();
-        } catch (Exception e) {
-            System.out.println(e);
-        }
-
-
-        //Loader courses og lectures ind til databasen
-        System.out.println("Server running");
-        System.out.println("Visit: http://" + ConfigLoader.SERVER_ADDRESS + ":" + ConfigLoader.SERVER_PORT + "/");
-
-        AdminDTO adminDTO = new AdminDTO();
-        TUIMainMenu tuiMainMenu = new TUIMainMenu();
-        tuiMainMenu.tUILogIn(adminDTO);
-
-        System.out.println("Hit return to stop...");
-        System.in.read();
-        System.out.println("Stopping server");
-        System.out.println("Server stopped");
-        System.out.println();
     }
+
 }

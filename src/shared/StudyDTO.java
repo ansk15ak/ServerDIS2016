@@ -1,7 +1,7 @@
 package shared;
 
 /**
- * Created by andershoumann on 28/10/2016.
+ * Skabelon på et studie
  */
 public class StudyDTO {
 
@@ -9,14 +9,16 @@ public class StudyDTO {
     private  String name;
     private  String shortname;
 
+    // Variabler skal defineres efterfølgende via public setters
+    public StudyDTO() {
+
+    }
+
+    // Variabler defineres under initiering
     public StudyDTO (int id, String name, String shortname){
         this.id = id;
         this.shortname = shortname;
         this.name = name;
-    }
-
-    public StudyDTO() {
-
     }
 
     public int getId() {
@@ -43,6 +45,10 @@ public class StudyDTO {
         this.shortname = shortname;
     }
 
+    /**
+     * En tekstbeskrivelse af et studie
+     * @return String repræsentationen på et studie
+     */
     @Override
     public String toString() {
         return "StudyDTO{" +

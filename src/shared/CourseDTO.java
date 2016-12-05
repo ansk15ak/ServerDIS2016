@@ -3,24 +3,28 @@ package shared;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
+/**
+ * Skabelon på et kursus
+ */
 public class CourseDTO {
-
-    @SerializedName("events")
-    @Expose
 
     /*
         Events er vores samling af LectureDTO objekter. Det havde givet mere mening at kalde denne variabel
         for "lectures", men "events" var nødvendigt for at kunne parse Json dataen ind i CBS parser
      */
+    @SerializedName("events")
+    @Expose
     private LectureDTO[] events;
 
     private String id;
     private String code;
     private String displaytext;
 
+    // Variabler skal defineres efterfølgende via public setters
     public CourseDTO() {
     }
 
+    // Variabler defineres under initiering
     public CourseDTO(String id, String displaytext, String code) {
         this.id = id;
         this.displaytext = displaytext;
@@ -67,8 +71,10 @@ public class CourseDTO {
         this.code = code;
     }
 
-
-
+    /**
+     * En tekstbeskrivelse af et kursus
+     * @return String repræsentationen på et kursus
+     */
     @Override
     public String toString() {
         return "CourseDTO{" +

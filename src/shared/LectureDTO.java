@@ -1,10 +1,12 @@
 package shared;
 
 import java.util.Date;
-import java.sql.Time;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Skabelon på en lektion
+ */
 public class LectureDTO {
 
     private int id;
@@ -17,10 +19,11 @@ public class LectureDTO {
     private Date endDate;
     private String location;
 
+    // Variabler skal defineres efterfølgende via public setters
     public LectureDTO() {
     }
 
-
+    // Variabler defineres under initiering
     public LectureDTO(int courseId, String type, String description, Date startDate, Date endDate, String location, int id) {
         this.courseId = courseId;
         this.type = type;
@@ -34,8 +37,6 @@ public class LectureDTO {
     public int getId() {
         return id;
     }
-
-
 
     public int getLectureId() {
         return id;
@@ -110,6 +111,10 @@ public class LectureDTO {
     }
 
 
+    /**
+     * En tekstbeskrivelse af en lektion
+     * @return String repræsentationen på en lektion
+     */
     @Override
     public String toString() {
         return "\nLectureDTO{" +

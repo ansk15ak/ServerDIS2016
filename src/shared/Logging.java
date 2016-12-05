@@ -5,38 +5,32 @@ import java.util.logging.FileHandler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-//TODO: Needs proper comments1231231
+/**
+ * Skabelon på loggen
+ */
 public class Logging {
 
     /**
-    Opretter en metode som er tilgængelig for alle klasser
-     **/
+    En log initieres
+     */
     protected static final Logger logger = Logger.getLogger("logging");
 
     /**
-     * Opretter if-else statement der kigger ind i Config-filen og differentierer mellem de forskellige levels.
-     * Der er defineret niveau 1 og niveau 2, hvis ingen af disse niveauer findes så er den pr. definition SEVERE
-     *
-     * @param debugLevel
+     * Log level bestemmes ud fra konfigurationen. SEVERE er default.
+     * @param debugLevel Det ønskede Log Level.
      */
-    public static void initiateLog(String debugLevel){
-        if(debugLevel.equals("1")){
-            logger.setLevel(Level.FINEST);
-        }else if(debugLevel.equals("2")){
-            logger.setLevel(Level.FINE);
-        }else{
-            logger.setLevel(Level.SEVERE);
-        }
+    public static void setLogLevel(String debugLevel){
+        if(debugLevel.equals("1")) { logger.setLevel(Level.FINEST); }
+        else if(debugLevel.equals("2")) { logger.setLevel(Level.FINE); }
+        else { logger.setLevel(Level.SEVERE); }
     }
 
     /**
-     * Følgende opstilles som en switch case.
-     * Opretter metode med tre parametre: Exception, level og msg.
+     * En log entry tilføjes til loggen
      * Filehandler sørger at der oprettes en tekstfil ved navn "application.log" hvorpå data tilskrives.
-     * Til sidst lukkes try-catch , ved et finally som altid eksekveres 
-     *
-     *
-
+     * @param ex en fejlbesked
+     * @param level det valgte log level
+     * @param msg beskeden der skal logges
      */
     public static void log(Exception ex, int level, String msg) {
         FileHandler fh = null;
@@ -66,7 +60,7 @@ public class Logging {
 
             }
         } catch (IOException ex1) {
-            logger.log(Level.SEVERE, null, ex1);
+            System.out.println("Loggen kunne ikke findes" + ex1);
         } catch (SecurityException ex1) {
             logger.log(Level.SEVERE, null, ex1);
         }finally {
