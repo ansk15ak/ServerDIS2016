@@ -11,20 +11,34 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Klassen indeholder logikken bag lærerens funktioner.
+ */
 public class TeacherController extends UserController {
 
     private TeacherDTO currentTeacher;
 
+    /**
+     * TeacherController har nedarvet fra UserController dvs. den har adgang til de samme metoder.
+     */
     public TeacherController() {
         super();
     }
 
+    /**
+     * Indlæs læreren
+     * @param currentTeacher den aktuelle lærer
+     */
     public void loadTeacher(TeacherDTO currentTeacher) {
         this.currentTeacher = currentTeacher;
     }
 
+    /**
+     * Denne metode beregner review gennemsnit for en lektion.
+     * @param lectureId Den ønskede lektion
+     * @return
+     */
     public double calculateAverageRatingOnLecture(int lectureId) {
-        //DecimalFormat df = new DecimalFormat("#.00");
 
         getReviews(lectureId);
 
@@ -41,84 +55,78 @@ public class TeacherController extends UserController {
     }
 
     /**
-     * Udregner den gennemsnitlige rating for et givent kursus ud fra dets lektioner.
-     * @param course ID'et på kurset
-     * @return Returnerer den gennemsnitlige rating for kurset som en Integer.
+     * Denne metode udregner den gennemsnitlige rating for et givent kursus ud fra dets lektioner.
+     * @param course Identifier på kurset
+     * @return Returnerer den gennemsnitlige rating for kurset som en Double.
      */
-
-    /**
-     * Gennemsøger tabellen course_attendant for brugere med et bestemt course_id.
-     *
-     * @param course id'et på det kursus man ønsker samlet antal deltagere for.
-     * @return det samlede antal der er tilmeldt kurset.
-     */
-
     public double calculateAverageRatingOnCourse(String course) {
 
         int lectureId = 0;
         double sumOfRatings = 0;
         double numberOfReviews = 0;
 
-        // for (LectureDTO lecture : getLectures1(courseId)) {
-        for (LectureDTO lecture : getLectures(course)) {
+        ArrayList<LectureDTO> lectures = new ArrayList<LectureDTO>();
+        lectures = getLectures(course);
+        for (LectureDTO lecture : lectures) {
             lectureId = lecture.getId();
         }
 
-        //for (ReviewDTO review : getReviews1(lectureId)) {
-        for (ReviewDTO review : getReviews(lectureId)) {
+        ArrayList<ReviewDTO> reviews = new ArrayList<ReviewDTO>();
+        reviews = getReviews(lectureId);
+        for (ReviewDTO review : reviews) {
             sumOfRatings = sumOfRatings + review.getRating();
         }
 
-        //numberOfReviews = getReviews1(lectureId).size();
         numberOfReviews = getReviews(lectureId).size();
-
         double average = sumOfRatings / numberOfReviews;
 
         return average;
     }
 
+    /**
+     * Denne metode giver mulighed for at slette et review.
+     * @param reviewId Det review der ønskes slettet.
+     * @return hvorvidt reviewet er slettet eller ej
+     */
     public boolean softDeleteReviewTeacher(int reviewId) {
+
         boolean isSoftDeleted = true;
 
         try {
             Map<String, String> isDeleted = new HashMap();
-
             isDeleted.put("is_deleted", "1");
-
             Map<String, String> params = new HashMap();
             params.put("id", String.valueOf(reviewId));
-            //params.put("user_id", String.valueOf(userId));
 
+            // Opdater review i DB (soft delete)
             DBWrapper.updateRecords("review", isDeleted, params);
-            return isSoftDeleted;
 
         } catch (SQLException e) {
             e.printStackTrace();
             isSoftDeleted = false;
         }
+
         return isSoftDeleted;
     }
 
-
     /**
-     * Udregner hvor mange som har deltaget i evaluering af lektionen ud fra samlet antal tilmeldte studerende på kurset.
-     *
-     * @param courseId ID'et på lektionen.
-     * @return Mængden af studerende som har deltaget i evalueringen, udregnet som en procentsats.
+     * Henter det samlede antal deltagere på kurset.
+     * @param courseId Identifier på kurset.
+     * @return Antal af deltagere på kurset.
      */
-
     public int getCourseParticipants(int courseId) {
 
-        //Forbered MySQL statement
         String table = "course_attendant";
         Map<String, String> whereStmt = new HashMap<String, String>();
         whereStmt.put("course_id", String.valueOf(courseId));
         CachedRowSet rs = null;
         int courseAttendants = 0;
 
-        //Query courseattendant og find samtlige instanser af det courseID
         try {
+            // Henter deltagere i DB
             rs = DBWrapper.getRecords(table, null, whereStmt, null, 0);
+
+            // Henter antal af deltagere
             courseAttendants = rs.size();
 
         } catch (SQLException e) {
@@ -126,7 +134,6 @@ public class TeacherController extends UserController {
         }
 
         return courseAttendants;
-
     }
 
 

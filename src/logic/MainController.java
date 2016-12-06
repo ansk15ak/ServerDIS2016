@@ -14,7 +14,6 @@ import java.util.Map;
 /**
  * MainControlleren er den første controlleren der bliver kørt.
  */
-
 public class MainController {
 
     private AdminDTO admin;
@@ -34,42 +33,40 @@ public class MainController {
     }
 
     /**
-     * Dette er login metoden som er baseret på variablerne mail og password, som er indtastet af den studerende eller læreren.
+     * Dette er login metoden som er baseret på variablerne mail og password, som er indtastet af brugeren.
+     * @param mail brugerens e-mail adressen
+     * @param password brugerens kodeord
      */
-
     public void login (String mail, String password) {
 
         /**
-         * Her hashes passwordet (med salt), som så derefter er et sikkret password, (det er her anden gang det hashes)
+         * Her hashes passwordet (med salt), som så derefter er et sikret password, (det her er anden gang det hashes)
          */
         String securedPassword = Digester.hashWithSalt(password);
 
-        /**
-         * Her oprettes et map der tildeles nogen Strings, hvorefter mappet bliver indsat i metoden getRecords.
-         * Hvor efter et UserDTO oprettes der skal finde "type".
-         * if statement's sender brugeren til enten teacher- eller student controlleren.
-         */
         try {
 
             Map<String, String> loginMail = new HashMap<String, String>();
-
             loginMail.put("cbs_mail", String.valueOf(mail));
             loginMail.put("password", String.valueOf(password));
 
+            // Henter brugeren i DB
             ResultSet result = DBWrapper.getRecords("user", null, loginMail, null, 0);
 
             while (result.next()) {
                 UserDTO type = new UserDTO();
                 type.setType(result.getString("type"));
 
+                // Brugeren er en lærer
                 if (type.equals("teacher")) {
                     teacherCtrl = new TeacherController();
                     TeacherDTO teacherDTO = new TeacherDTO();
                     teacherDTO.setCbsMail(mail);
                     teacherDTO.setPassword(securedPassword);
                     teacherCtrl.loadTeacher(teacher);
-
                 }
+
+                // Brugeren er en studerende
                 if (type.equals("student")) {
                     studentCtrl = new StudentController();
                     StudentDTO studentDTO = new StudentDTO();
@@ -79,8 +76,6 @@ public class MainController {
                 }
             }
         }
-
-        //hvis der ingen ens værdi findes med det indtastede id og id i DB vil denne catch kaste brugeren videre til tuiAdminMenuen, hvor man kan få muligheden for og prøve igen osv.
         catch (SQLException e) {
             e.printStackTrace();
             Logging.log(e,1,"Brugeren kunne ikke logge ind som teacher eller student.");
@@ -89,41 +84,33 @@ public class MainController {
     }
 
     /**
-     * Denne metode logger admin ind i terminalen.
+     * Denne metode logger administrator ind i terminalen.
      */
     public int loginAdmin (AdminDTO adminDTO) {
 
         /**
-         * I dette tilfælde (hvor der logges ind gennem terminalen) er der ikke hashet første gang (hvor passwordet sendes fra klient til server)
+         * I dette tilfælde er der ikke hashet første gang
          * Derfor hashes der to gange her for at få samme hash værdi.
          */
 
         String password = adminDTO.getPassword();
         String mail = adminDTO.getCbsMail();
 
-        //Hasher på "server" siden
-        String securedPassword= Digester.hashWithSalt(password);
+        // Hasher på "server" siden
+        String securedPassword = Digester.hashWithSalt(password);
 
-        /**
-         * Her oprettes et map der tildeles nogen Strings, hvorefter mappet bliver indsat i metoden getRecords.
-         * Hvor efter et UserDTO oprettes der skal finde "type".
-         * if statement's sender brugeren til enten teacher- eller student controlleren.
-         */
         try {
             Map<String, String> loginMail = new HashMap<String, String>();
-
             loginMail.put("cbs_mail", String.valueOf(mail));
             loginMail.put("password", String.valueOf(securedPassword));
 
+            // Henter brugeren i DB
             ResultSet result = DBWrapper.getRecords("user", null, loginMail, null, 0);
 
-            //If login returned any rows
             while(result.next()) {
                 String type = result.getString("type");
 
-                /**
-                 * En if statement der validere om brugeren der logger in er af typen admin eller kan der ikke logges ind i TUI.
-                 */
+                // Validere om brugeren er en administrator
                 if (type.equals("admin")) {
                     AdminDTO admin = new AdminDTO();
                     admin.setCbsMail(mail);
@@ -140,9 +127,7 @@ public class MainController {
                     return 10;
                 }
             }
-
         }
-
         catch (SQLException e) {
             System.out.print(e.getMessage());
             System.out.println("Du indtastede en forkert vaerdi, proev igen. \n");
@@ -150,11 +135,9 @@ public class MainController {
             TUIMainMenu tuiMainMenu = new TUIMainMenu();
             tuiMainMenu.tUILogIn(adminDTO);
         }
-        System.out.println("forkert login");
+
         TUIMainMenu tuiMainMenu = new TUIMainMenu();
         tuiMainMenu.tUILogIn(adminDTO);
         return 200;
-
     }
-
 }
