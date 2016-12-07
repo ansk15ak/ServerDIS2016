@@ -40,11 +40,11 @@ public class TUIMainMenu {
             * Denne switch tager administrators input (choice) og sender det videre til den valgte case.
             **/
             switch (choice) {
-                case 0:
+                case 0: // stop program og log ud
                     System.out.println("Programmet er stoppet.");
                     System.exit(0);
                     break;
-                case 1:
+                case 1: // indtast email og password
                     Scanner input1 = new Scanner(System.in);
                     System.out.println("Indtast mail:");
                     mail = input1.nextLine();
