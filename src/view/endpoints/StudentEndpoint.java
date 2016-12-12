@@ -32,8 +32,8 @@ public class StudentEndpoint extends UserEndpoint {
             boolean isAdded = studentCtrl.addReview(review);
 
             if (isAdded) {
-                //String toJson = gson.toJson(Digester.encrypt(gson.toJson(isAdded)));
-                String toJson = gson.toJson((gson.toJson(isAdded)));
+                String toJson = gson.toJson(Digester.encrypt(gson.toJson(isAdded)));
+                //String toJson = gson.toJson((gson.toJson(isAdded)));
                 System.out.println("Tilføjet");
                return successResponse(200, toJson);
             } else {
